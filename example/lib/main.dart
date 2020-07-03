@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_boost/flutter_boost.dart';
 import 'simple_page_widgets.dart';
+import 'tap_repair_v112.dart';
 
 void main() {
   runApp(MyApp());
@@ -31,16 +32,28 @@ class _MyAppState extends State<MyApp> {
       },
     });
     FlutterBoost.singleton.addBoostNavigatorObserver(TestBoostNavigatorObserver());
+
+    BoostContainerLifeCycleObserver observer = (state, setting) {
+      if (ContainerLifeCycle.Appear == state) {
+        TapGestureRepairV112State currentState = _tapRepairKey.currentState;
+        currentState?.repairPointer();
+      }
+    };
+    FlutterBoost.singleton.observersHolder.addObserver(observer);
   }
+
+  GlobalKey _tapRepairKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return TapGestureRepairV112(
+      key: _tapRepairKey,
+      child: MaterialApp(
         title: 'Flutter Boost example',
         builder: FlutterBoost.init(postPush: _onRoutePushed),
-        home: Container(
-            color:Colors.white
-        ));
+        home: Container(color: Colors.white),
+      ),
+    );
   }
 
   void _onRoutePushed(
